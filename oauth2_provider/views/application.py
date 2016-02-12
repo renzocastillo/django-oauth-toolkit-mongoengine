@@ -1,9 +1,14 @@
 from django.core.urlresolvers import reverse_lazy
-from django.forms.models import modelform_factory
-from django.views.generic import CreateView, DetailView, DeleteView, ListView, UpdateView
+# from django.forms.models import modelform_factory
+# from django.views.generic import CreateView, DetailView, DeleteView, ListView, UpdateView
+from trotamundia.django_mongoengine.views import CreateView, DetailView, DeleteView, ListView, UpdateView
+from trotamundia.django_mongoengine.forms import DocumentForm
+from trotamundia.django_mongoengine.forms.documents import documentform_factory
+
 
 from braces.views import LoginRequiredMixin
 
+from ..compat import AUTH_USER_MODEL
 from ..models import get_application_model
 
 
@@ -14,7 +19,7 @@ class ApplicationOwnerIsUserMixin(LoginRequiredMixin):
     fields = '__all__'
 
     def get_queryset(self):
-        return get_application_model().objects.filter(user=self.request.user)
+        return get_application_model().objects()
 
 
 class ApplicationRegistration(LoginRequiredMixin, CreateView):
@@ -27,14 +32,15 @@ class ApplicationRegistration(LoginRequiredMixin, CreateView):
         """
         Returns the form class for the application model
         """
-        return modelform_factory(
+        # return ApplicationForm
+        return documentform_factory(
             get_application_model(),
             fields=('name', 'client_id', 'client_secret', 'client_type',
                     'authorization_grant_type', 'redirect_uris')
         )
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        # form.cleaned_data['user'] = self.request.user
         return super(ApplicationRegistration, self).form_valid(form)
 
 

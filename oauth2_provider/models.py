@@ -2,6 +2,9 @@ from __future__ import unicode_literals
 
 from datetime import timedelta
 
+import mongoengine
+from mongoengine import Document, fields
+
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.utils import timezone
@@ -17,7 +20,7 @@ from .validators import validate_uris
 
 
 @python_2_unicode_compatible
-class AbstractApplication(models.Model):
+class AbstractApplication(Document):
     """
     An Application instance represents a Client on the Authorization server.
     Usually an Application is created manually by client's developers after
@@ -55,22 +58,24 @@ class AbstractApplication(models.Model):
         (GRANT_CLIENT_CREDENTIALS, _('Client credentials')),
     )
 
-    client_id = models.CharField(max_length=100, unique=True,
-                                 default=generate_client_id, db_index=True)
-    user = models.ForeignKey(AUTH_USER_MODEL, related_name="%(app_label)s_%(class)s")
+    client_id = fields.StringField(max_length=100, unique=True,
+                                   default=generate_client_id, db_index=True)
+    # user = fields.ReferenceField(AUTH_USER_MODEL, dbref=True, required=True)
     help_text = _("Allowed URIs list, space separated")
-    redirect_uris = models.TextField(help_text=help_text,
+    redirect_uris = fields.StringField(help_text=help_text,
                                      validators=[validate_uris], blank=True)
-    client_type = models.CharField(max_length=32, choices=CLIENT_TYPES)
-    authorization_grant_type = models.CharField(max_length=32,
-                                                choices=GRANT_TYPES)
-    client_secret = models.CharField(max_length=255, blank=True,
-                                     default=generate_client_secret, db_index=True)
-    name = models.CharField(max_length=255, blank=True)
-    skip_authorization = models.BooleanField(default=False)
+    client_type = fields.StringField(max_length=32, choices=CLIENT_TYPES)
+    authorization_grant_type = fields.StringField(max_length=32,
+                                                  choices=GRANT_TYPES)
+    client_secret = fields.StringField(max_length=255, blank=True,
+                                       default=generate_client_secret, 
+                                       db_index=True)
+    name = fields.StringField(max_length=255, blank=True)
+    skip_authorization = fields.BooleanField(default=False)
 
-    class Meta:
-        abstract = True
+    meta = {
+        'abstract': True,
+    }
 
     @property
     def default_redirect_uri(self):
@@ -131,7 +136,7 @@ Application._meta.swappable = 'OAUTH2_PROVIDER_APPLICATION_MODEL'
 
 
 @python_2_unicode_compatible
-class Grant(models.Model):
+class Grant(Document):
     """
     A Grant instance represents a token with a short lifetime that can
     be swapped for an access token, as described in :rfc:`4.1.2`
@@ -146,12 +151,13 @@ class Grant(models.Model):
     * :attr:`redirect_uri` Self explained
     * :attr:`scope` Required scopes, optional
     """
-    user = models.ForeignKey(AUTH_USER_MODEL)
-    code = models.CharField(max_length=255, db_index=True)  # code comes from oauthlib
-    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL)
-    expires = models.DateTimeField()
-    redirect_uri = models.CharField(max_length=255)
-    scope = models.TextField(blank=True)
+    user = fields.ReferenceField(AUTH_USER_MODEL, dbref=True)
+    code = fields.StringField(max_length=255, db_index=True)  # code comes from oauthlib
+    application = fields.ReferenceField(oauth2_settings.APPLICATION_MODEL, 
+                                        dbref=True)
+    expires = fields.DateTimeField()
+    redirect_uri = fields.StringField(max_length=255)
+    scope = fields.StringField(blank=True)
 
     def is_expired(self):
         """
@@ -170,7 +176,7 @@ class Grant(models.Model):
 
 
 @python_2_unicode_compatible
-class AccessToken(models.Model):
+class AccessToken(Document):
     """
     An AccessToken instance represents the actual access token to
     access user's resources, as in :rfc:`5`.
@@ -183,11 +189,11 @@ class AccessToken(models.Model):
     * :attr:`expires` Date and time of token expiration, in DateTime format
     * :attr:`scope` Allowed scopes
     """
-    user = models.ForeignKey(AUTH_USER_MODEL, blank=True, null=True)
-    token = models.CharField(max_length=255, db_index=True)
-    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL)
-    expires = models.DateTimeField()
-    scope = models.TextField(blank=True)
+    user = fields.ReferenceField(AUTH_USER_MODEL, dbref=True, blank=True, null=True)
+    token = fields.StringField(max_length=255, db_index=True)
+    application = fields.ReferenceField(oauth2_settings.APPLICATION_MODEL, dbref=True)
+    expires = fields.DateTimeField()
+    scope = fields.StringField(blank=True)
 
     def is_valid(self, scopes=None):
         """
@@ -239,7 +245,7 @@ class AccessToken(models.Model):
 
 
 @python_2_unicode_compatible
-class RefreshToken(models.Model):
+class RefreshToken(Document):
     """
     A RefreshToken instance represents a token that can be swapped for a new
     access token when it expires.
@@ -252,11 +258,10 @@ class RefreshToken(models.Model):
     * :attr:`access_token` AccessToken instance this refresh token is
                            bounded to
     """
-    user = models.ForeignKey(AUTH_USER_MODEL)
-    token = models.CharField(max_length=255, db_index=True)
-    application = models.ForeignKey(oauth2_settings.APPLICATION_MODEL)
-    access_token = models.OneToOneField(AccessToken,
-                                        related_name='refresh_token')
+    user = fields.ReferenceField(AUTH_USER_MODEL, dbref=True)
+    token = fields.StringField(max_length=255, db_index=True)
+    application = fields.ReferenceField(oauth2_settings.APPLICATION_MODEL, dbref=True)
+    access_token = fields.ReferenceField(AccessToken, dbref=True)
 
     def revoke(self):
         """
@@ -271,12 +276,13 @@ class RefreshToken(models.Model):
 
 def get_application_model():
     """ Return the Application model that is active in this project. """
-    try:
-        app_label, model_name = oauth2_settings.APPLICATION_MODEL.split('.')
-    except ValueError:
-        e = "APPLICATION_MODEL must be of the form 'app_label.model_name'"
-        raise ImproperlyConfigured(e)
-    app_model = get_model(app_label, model_name)
+    # try:
+    #     app_label, model_name = oauth2_settings.APPLICATION_MODEL.split('.')
+    # except ValueError:
+    #     e = "APPLICATION_MODEL must be of the form 'app_label.model_name'"
+    #     raise ImproperlyConfigured(e)
+    # app_model = get_model(app_label, model_name)
+    app_model = Application
     if app_model is None:
         e = "APPLICATION_MODEL refers to model {0} that has not been installed"
         raise ImproperlyConfigured(e.format(oauth2_settings.APPLICATION_MODEL))
