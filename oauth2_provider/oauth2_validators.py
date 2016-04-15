@@ -226,7 +226,7 @@ class OAuth2Validator(RequestValidator):
             return False
 
         try:
-            access_token = AccessToken.objects.select_related("application", "user").get(
+            access_token = AccessToken.objects.get(
                 token=token)
             if access_token.is_valid(scopes):
                 request.client = access_token.application
