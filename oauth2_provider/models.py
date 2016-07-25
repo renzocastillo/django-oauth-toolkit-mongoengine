@@ -132,8 +132,10 @@ class AbstractApplication(Document):
 
 
 class Application(AbstractApplication):
-    class Meta(AbstractApplication.Meta):
-        swappable = 'OAUTH2_PROVIDER_APPLICATION_MODEL'
+    pass
+
+Application._meta.swappable = 'OAUTH2_PROVIDER_APPLICATION_MODEL'
+
 
 
 @python_2_unicode_compatible
