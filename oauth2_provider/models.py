@@ -5,6 +5,9 @@ from datetime import timedelta
 import mongoengine
 from mongoengine import Document, fields
 
+from django.apps import apps
+from django.conf import settings
+
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.utils import timezone
@@ -14,7 +17,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.core.exceptions import ImproperlyConfigured
 
 from .settings import oauth2_settings
-from .compat import AUTH_USER_MODEL, parse_qsl, urlparse, get_model
+from .compat import parse_qsl, urlparse
 from .generators import generate_client_secret, generate_client_id
 from .validators import validate_uris
 
@@ -129,10 +132,8 @@ class AbstractApplication(Document):
 
 
 class Application(AbstractApplication):
-    pass
-
-# Add swappable like this to not break django 1.4 compatibility
-Application._meta.swappable = 'OAUTH2_PROVIDER_APPLICATION_MODEL'
+    class Meta(AbstractApplication.Meta):
+        swappable = 'OAUTH2_PROVIDER_APPLICATION_MODEL'
 
 
 @python_2_unicode_compatible
@@ -283,6 +284,7 @@ def get_application_model():
     #     raise ImproperlyConfigured(e)
     # app_model = get_model(app_label, model_name)
     app_model = Application
+
     if app_model is None:
         e = "APPLICATION_MODEL refers to model {0} that has not been installed"
         raise ImproperlyConfigured(e.format(oauth2_settings.APPLICATION_MODEL))

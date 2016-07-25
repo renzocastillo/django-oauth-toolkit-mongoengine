@@ -1,9 +1,9 @@
 from django.core.urlresolvers import reverse_lazy
 # from django.forms.models import modelform_factory
 # from django.views.generic import CreateView, DetailView, DeleteView, ListView, UpdateView
-from trotamundia.django_mongoengine.views import CreateView, DetailView, DeleteView, ListView, UpdateView
-from trotamundia.django_mongoengine.forms import DocumentForm
-from trotamundia.django_mongoengine.forms.documents import documentform_factory
+from django_mongoengine.views import CreateView, DetailView, DeleteView, ListView, UpdateView
+from django_mongoengine.forms import DocumentForm
+from django_mongoengine.forms.documents import documentform_factory
 
 
 from braces.views import LoginRequiredMixin

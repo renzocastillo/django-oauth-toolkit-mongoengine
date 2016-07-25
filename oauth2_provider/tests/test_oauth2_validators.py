@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 import mock
@@ -5,7 +6,6 @@ from oauthlib.common import Request
 
 from ..oauth2_validators import OAuth2Validator
 from ..models import get_application_model
-from ..compat import get_user_model
 
 UserModel = get_user_model()
 AppModel = get_application_model()
@@ -49,6 +49,12 @@ class TestOAuth2Validator(TestCase):
 
     def test_authenticate_basic_auth(self):
         self.request.encoding = 'utf-8'
+        # client_id:client_secret
+        self.request.headers = {'HTTP_AUTHORIZATION': 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=\n'}
+        self.assertTrue(self.validator._authenticate_basic_auth(self.request))
+
+    def test_authenticate_basic_auth_default_encoding(self):
+        self.request.encoding = None
         # client_id:client_secret
         self.request.headers = {'HTTP_AUTHORIZATION': 'Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ=\n'}
         self.assertTrue(self.validator._authenticate_basic_auth(self.request))

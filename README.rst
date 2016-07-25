@@ -32,7 +32,17 @@ Contributing
 ------------
 
 We love contributions, so please feel free to fix bugs, improve things, provide documentation. Just `follow the
-guidelines <https://django-oauth-toolkit.readthedocs.org/en/latest/contributing.html>`_ and submit a PR.
+guidelines <https://django-oauth-toolkit.readthedocs.io/en/latest/contributing.html>`_ and submit a PR.
+
+Reporting security issues
+-------------------------
+
+If you believe you've found an issue with security implications, please send a detailed description via email to **security@evonove.it**.
+Mail sent to that address reaches the Django OAuth Toolkit core team, who can solve (or forward) the security issue as soon as possible. After
+our acknowledge, we may decide to open a public discussion in our mailing list or issues tracker.
+
+Once you’ve submitted an issue via email, you should receive a response from the core team within 48 hours, and depending on the action to be
+taken, you may receive further followup emails.
 
 Requirements
 ------------
@@ -70,7 +80,7 @@ Notice that `oauth2_provider` namespace is mandatory.
 Documentation
 --------------
 
-The `full documentation <https://django-oauth-toolkit.readthedocs.org/>`_ is on *Read the Docs*.
+The `full documentation <https://django-oauth-toolkit.readthedocs.io/>`_ is on *Read the Docs*.
 
 License
 -------
@@ -86,6 +96,12 @@ Roadmap / Todo list (help wanted)
 
 Changelog
 ---------
+
+Development
+~~~~~~~~~~~
+
+* #396: added an IsAuthenticatedOrTokenHasScope Permission
+* #357: Support multiple-user clients by allowing User to be NULL for Applications
 
 0.10.0 [2015-12-14]
 ~~~~~~~~~~~~~~~~~~~

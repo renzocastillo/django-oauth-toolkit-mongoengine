@@ -51,6 +51,8 @@ setup(
     test_suite='runtests',
     install_requires=[
         'django>=1.7',
+        'mongoengine==0.10.6',
+        'git+https://github.com/MongoEngine/django-mongoengine.git',
         'django-braces>=1.8.1',
         'oauthlib==1.0.3',
         'six',
