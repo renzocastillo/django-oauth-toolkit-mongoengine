@@ -8,7 +8,6 @@ from django_mongoengine.forms.documents import documentform_factory
 
 from braces.views import LoginRequiredMixin
 
-from ..compat import AUTH_USER_MODEL
 from ..models import get_application_model
 
 
