@@ -39,7 +39,7 @@ class ApplicationRegistration(LoginRequiredMixin, CreateView):
         )
 
     def form_valid(self, form):
-        # form.cleaned_data['user'] = self.request.user
+        form.cleaned_data['user'] = self.request.user
         return super(ApplicationRegistration, self).form_valid(form)
 
 
