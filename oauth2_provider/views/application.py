@@ -4,10 +4,8 @@ from django.core.urlresolvers import reverse_lazy
 from django_mongoengine.views import CreateView, DetailView, DeleteView, ListView, UpdateView
 from django_mongoengine.forms import DocumentForm
 from django_mongoengine.forms.documents import documentform_factory
-from django_mongoengine.mongo_auth.models import MongoUser
 
 from braces.views import LoginRequiredMixin
-
 from ..models import get_application_model
 
 
