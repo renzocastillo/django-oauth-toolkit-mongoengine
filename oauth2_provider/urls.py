@@ -13,13 +13,13 @@ urlpatterns = (
 urlpatterns += (
     url(r'^applications/$', views.ApplicationList.as_view(), name="list"),
     url(r'^applications/register/$', views.ApplicationRegistration.as_view(), name="register"),
-    url(r'^applications/(?P<uid>[^/]+)/$', views.ApplicationDetail.as_view(), name="detail"),
-    url(r'^applications/(?P<uid>[^/]+)/delete/$', views.ApplicationDelete.as_view(), name="delete"),
-    url(r'^applications/(?P<uid>[^/]+)/update/$', views.ApplicationUpdate.as_view(), name="update"),
+    url(r'^applications/(?P<pk>[^/]+)/$', views.ApplicationDetail.as_view(), name="detail"),
+    url(r'^applications/(?P<pk>[^/]+)/delete/$', views.ApplicationDelete.as_view(), name="delete"),
+    url(r'^applications/(?P<pk>[^/]+)/update/$', views.ApplicationUpdate.as_view(), name="update"),
 )
 
 urlpatterns += (
     url(r'^authorized_tokens/$', views.AuthorizedTokensListView.as_view(), name="authorized-token-list"),
-    url(r'^authorized_tokens/(?P<uid>[^/]+)/delete/$', views.AuthorizedTokenDeleteView.as_view(),
+    url(r'^authorized_tokens/(?P<pk>[^/]+)/delete/$', views.AuthorizedTokenDeleteView.as_view(),
         name="authorized-token-delete"),
 )
