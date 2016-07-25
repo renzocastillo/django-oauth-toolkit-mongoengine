@@ -63,7 +63,8 @@ class AbstractApplication(Document):
 
     client_id = fields.StringField(max_length=100, unique=True,
                                    default=generate_client_id, db_index=True)
-    # user = fields.ReferenceField(settings.AUTH_USER_MODEL, dbref=True, required=True)
+
+    user = fields.ReferenceField(settings.AUTH_USER_MODEL, dbref=True, required=True)
     help_text = _("Allowed URIs list, space separated")
     redirect_uris = fields.StringField(help_text=help_text,
                                      validators=[validate_uris], blank=True)

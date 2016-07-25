@@ -5,7 +5,7 @@ from django.views.generic import ListView, DeleteView
 
 from braces.views import LoginRequiredMixin
 
-from ..models import AccessToken
+from ..models import AccessToken, Application
 
 
 class AuthorizedTokensListView(LoginRequiredMixin, ListView):
@@ -20,8 +20,9 @@ class AuthorizedTokensListView(LoginRequiredMixin, ListView):
         """
         Show only user's tokens
         """
-        return super(AuthorizedTokensListView, self).get_queryset()\
-            .select_related('application').filter(user=self.request.user)
+        application = Application.objects.get(user=self.request.user)
+        queryset = super(AuthorizedTokensListView, self).get_queryset().filter(application=application)
+        return queryset
 
 
 class AuthorizedTokenDeleteView(LoginRequiredMixin, DeleteView):
