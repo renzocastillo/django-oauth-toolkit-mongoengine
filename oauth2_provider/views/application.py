@@ -5,6 +5,9 @@ from django_mongoengine.views import CreateView, DetailView, DeleteView, ListVie
 from django_mongoengine.forms import DocumentForm
 from django_mongoengine.forms.documents import documentform_factory
 
+from django.conf import settings
+from django.utils.module_loading import import_string
+
 from braces.views import LoginRequiredMixin
 from ..models import get_application_model
 
@@ -37,7 +40,8 @@ class ApplicationRegistration(LoginRequiredMixin, CreateView):
         )
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        User = import_string(settings.AUTH_USER_MODEL)
+        form.instance.user = User.objects.get(id=self.request.user.id)
         return super(ApplicationRegistration, self).form_valid(form)
 
 
