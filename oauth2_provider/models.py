@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 from datetime import timedelta
 
-import mongoengine
-from mongoengine import Document, fields
+from django_mongoengine.document import Document
+from django_mongoengine import fields
 
 from django.apps import apps
 from django.conf import settings
