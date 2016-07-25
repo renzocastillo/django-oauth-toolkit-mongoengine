@@ -58,6 +58,6 @@ setup(
     ],
     dependency_links=[
         'git+https://github.com/MongoEngine/django-mongoengine.git',
-    ]
+    ],
     zip_safe=False,
 )
