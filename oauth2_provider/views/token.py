@@ -20,9 +20,11 @@ class AuthorizedTokensListView(LoginRequiredMixin, ListView):
         """
         Show only user's tokens
         """
-        application = Application.objects.get(user=self.request.user)
-        queryset = super(AuthorizedTokensListView, self).get_queryset().filter(application=application)
-        return queryset
+        try:
+            application = Application.objects.get(user=self.request.user)
+            return super(AuthorizedTokensListView, self).get_queryset().filter(application=application)
+        except Application.DoesNotExist:
+            return super(AuthorizedTokensListView, self).get_queryset()
 
 
 class AuthorizedTokenDeleteView(LoginRequiredMixin, DeleteView):

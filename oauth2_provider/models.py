@@ -64,7 +64,7 @@ class AbstractApplication(Document):
     client_id = fields.StringField(max_length=100, unique=True,
                                    default=generate_client_id, db_index=True)
 
-    user = fields.ReferenceField(settings.AUTH_USER_MODEL, dbref=True, required=True)
+    user = fields.ReferenceField(settings.MONGOENGINE_USER_DOCUMENT, dbref=True, required=True)
     help_text = _("Allowed URIs list, space separated")
     redirect_uris = fields.StringField(help_text=help_text,
                                      validators=[validate_uris], blank=True)
@@ -156,7 +156,7 @@ class Grant(Document):
     * :attr:`redirect_uri` Self explained
     * :attr:`scope` Required scopes, optional
     """
-    user = fields.ReferenceField(settings.AUTH_USER_MODEL, dbref=True)
+    user = fields.ReferenceField(settings.MONGOENGINE_USER_DOCUMENT, dbref=True)
     code = fields.StringField(max_length=255, db_index=True)  # code comes from oauthlib
     application = fields.ReferenceField(oauth2_settings.APPLICATION_MODEL, 
                                         dbref=True)
@@ -194,7 +194,7 @@ class AccessToken(Document):
     * :attr:`expires` Date and time of token expiration, in DateTime format
     * :attr:`scope` Allowed scopes
     """
-    user = fields.ReferenceField(settings.AUTH_USER_MODEL, dbref=True, blank=True, null=True)
+    user = fields.ReferenceField(settings.MONGOENGINE_USER_DOCUMENT, dbref=True, blank=True, null=True)
     token = fields.StringField(max_length=255, db_index=True)
     application = fields.ReferenceField(oauth2_settings.APPLICATION_MODEL, dbref=True)
     expires = fields.DateTimeField()
@@ -263,7 +263,7 @@ class RefreshToken(Document):
     * :attr:`access_token` AccessToken instance this refresh token is
                            bounded to
     """
-    user = fields.ReferenceField(settings.AUTH_USER_MODEL, dbref=True)
+    user = fields.ReferenceField(settings.MONGOENGINE_USER_DOCUMENT, dbref=True)
     token = fields.StringField(max_length=255, db_index=True)
     application = fields.ReferenceField(oauth2_settings.APPLICATION_MODEL, dbref=True)
     access_token = fields.ReferenceField(AccessToken, dbref=True)

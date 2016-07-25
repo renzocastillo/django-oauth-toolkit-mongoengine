@@ -40,7 +40,8 @@ class ApplicationRegistration(LoginRequiredMixin, CreateView):
         )
 
     def form_valid(self, form):
-        User = import_string(settings.AUTH_USER_MODEL)
+        auth_user_model = settings.MONGOENGINE_USER_DOCUMENT
+        User = import_string(auth_user_model)
         form.instance.user = User.objects.get(id=self.request.user.id)
         return super(ApplicationRegistration, self).form_valid(form)
 
@@ -74,5 +75,7 @@ class ApplicationUpdate(ApplicationOwnerIsUserMixin, UpdateView):
     """
     View used to update an application owned by the request.user
     """
+    fields = ('client_id', 'client_secret', 'client_type', 
+              'authorization_grant_type', 'name', 'redirect_uris')
     context_object_name = 'application'
     template_name = "oauth2_provider/application_form.html"
