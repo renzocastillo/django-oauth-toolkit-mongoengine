@@ -78,6 +78,7 @@ class AbstractApplication(Document):
 
     meta = {
         'abstract': True,
+        'virtual_fields': []
     }
 
     @property
