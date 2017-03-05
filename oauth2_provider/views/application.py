@@ -8,11 +8,11 @@ from django_mongoengine.forms.documents import documentform_factory
 from django.conf import settings
 from django.utils.module_loading import import_string
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, SuperuserRequiredMixin
 from ..models import get_application_model
 
 
-class ApplicationOwnerIsUserMixin(LoginRequiredMixin):
+class ApplicationOwnerIsUserMixin(LoginRequiredMixin, SuperuserRequiredMixin):
     """
     This mixin is used to provide an Application queryset filtered by the current request.user.
     """
@@ -22,7 +22,7 @@ class ApplicationOwnerIsUserMixin(LoginRequiredMixin):
         return get_application_model().objects()
 
 
-class ApplicationRegistration(LoginRequiredMixin, CreateView):
+class ApplicationRegistration(LoginRequiredMixin, SuperuserRequiredMixin, CreateView):
     """
     View used to register a new Application for the request.user
     """
